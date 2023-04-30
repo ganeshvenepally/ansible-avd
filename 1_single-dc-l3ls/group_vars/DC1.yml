@@ -1,0 +1,37 @@
+---
+# Default gateway used for the management interface
+mgmt_gateway: 192.168.1.1
+
+# Spine switch group
+spine:
+  # Definition of default values that will be configured to all nodes defined in this group
+  defaults:
+    # Set the relevant platform as each platform has different default values in Ansible AVD
+    platform: vEOS-lab
+    # Pool of IPv4 addresses to configure interface Loopback0 used for BGP EVPN sessions
+    loopback_ipv4_pool: 10.255.1.0/27
+    # ASN to be used by BGP
+    bgp_as: 65100
+    # BGP configuration for fine tuning
+    bgp_defaults:
+      # The two following commands must not be enabled when using vEOS-lab
+      # - update wait-for-convergence
+      # - update wait-install
+      - no bgp default ipv4-unicast
+      - distance bgp 20 200 200
+      - graceful-restart restart-time 300
+      - graceful-restart
+
+  # Definition of nodes contained in this group.
+  # Specific configuration of device must take place under the node definition. Each node inherites all values defined under 'defaults'
+  nodes:
+    # Name of the node to be defined (must be consistent with definition in inventory)
+    dc1-spine1:
+      # Device ID definition. An integer number used for internal calculations (ie. IPv4 address of the loopback_ipv4_pool among others)
+      id: 1
+      # Management IP to be assigned to the management interface
+      mgmt_ip: 192.168.1.200/24
+
+    dc1-spine2:
+      id: 2
+      mgmt_ip: 192.168.1.201/24
